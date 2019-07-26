@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/bgentry/heroku-go"
 )
@@ -29,7 +30,7 @@ func main() {
 		panic(err)
 	}
 
-	for _, app := range apps {
+	for k, app := range apps {
 		wg.Add(1)
 		go func(appName string) {
 			defer wg.Done()
@@ -43,6 +44,10 @@ func main() {
 				}
 			}
 		}(app.Name)
+		if k%50 == 0 {
+			fmt.Println("Going to sleep")
+			time.Sleep(10 * time.Second)
+		}
 	}
 
 	go func() {
